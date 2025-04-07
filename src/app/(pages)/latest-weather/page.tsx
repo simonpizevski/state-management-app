@@ -21,7 +21,7 @@ export default function LatestWeather() {
   const { data, error, isLoading } = useSWR<Weather>(
     'https://api.tomorrow.io/v4/weather/forecast?location=malmö&apikey=rwI9twG0VuhjYYSTKXlLxgRitBH3qaCt',
     fetcher,
-    { refreshInterval: 10000 }
+    { refreshInterval: 120000 }
   );
 
   if (error) return <div>Error loading weather...</div>;
