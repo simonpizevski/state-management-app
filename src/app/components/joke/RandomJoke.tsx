@@ -1,7 +1,7 @@
 'use client';
 
 import useSWR from 'swr';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -19,6 +19,19 @@ const jokeUrl =
 export default function RandomJoke() {
   const [requestCount, setRequestCount] = useState(0);
   const [favorites, setFavorites] = useState<Joke[]>([]);
+
+  useEffect(() => {
+    const savedFavorites = localStorage.getItem('favorites');
+    if (savedFavorites) {
+      setFavorites(JSON.parse(savedFavorites));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (favorites.length > 0) {
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+    }
+  }, [favorites]);
 
   const { data, error, isLoading, isValidating, mutate } = useSWR<Joke>(
     jokeUrl,
