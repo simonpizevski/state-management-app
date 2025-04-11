@@ -90,7 +90,6 @@ export default function RandomJoke() {
 
       <div className='mt-8 text-sm text-gray-500'>
         <p>Requests made: {requestCount}</p>
-        <p>Cache status: {data ? 'Loaded' : 'Empty'}</p>
       </div>
 
       {favorites.length > 0 && (
