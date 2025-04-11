@@ -1,7 +1,10 @@
 'use client';
 
 import useSWR from 'swr';
-import { fetcher } from '@/utils/fetcher';
+
+export const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+const apiKey = process.env.API_KEY;
 
 type Weather = {
   location: {
@@ -18,11 +21,12 @@ type Weather = {
 };
 
 export default function LatestWeather() {
-  const { data, error, isLoading } = useSWR<Weather>(
-    'https://api.tomorrow.io/v4/weather/forecast?location=malmö&apikey=rwI9twG0VuhjYYSTKXlLxgRitBH3qaCt',
-    fetcher,
-    { refreshInterval: 6000000 }
-  );
+  const apiUrl = `https://api.tomorrow.io/v4/weather/forecast?location=malmö&apikey=${apiKey}`;
+  console.log('API URL:', apiUrl);
+
+  const { data, error, isLoading } = useSWR<Weather>(apiUrl, fetcher, {
+    refreshInterval: 6000000,
+  });
 
   if (error) return <div>Error loading weather...</div>;
   if (isLoading) return <div>Loading...</div>;
