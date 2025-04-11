@@ -26,8 +26,8 @@ export default function LatestWeather() {
     apiKey;
   console.log('API URL:', apiUrl);
 
-  const { data, error, isLoading } = useSWR<Weather>(apiUrl, fetcher, {
-    refreshInterval: 6000000,
+  const { data, error, isLoading, mutate } = useSWR<Weather>(apiUrl, fetcher, {
+    refreshInterval: 300000,
   });
 
   if (error) return <div>Error loading weather...</div>;

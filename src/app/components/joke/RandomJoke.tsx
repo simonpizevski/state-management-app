@@ -1,12 +1,12 @@
 'use client';
 
 import useSWR from 'swr';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 type Joke = {
-  id: number;
+  id: string;
   type: string;
   setup: string;
   delivery: string;
@@ -20,25 +20,13 @@ export default function RandomJoke() {
   const [requestCount, setRequestCount] = useState(0);
   const [favorites, setFavorites] = useState<Joke[]>([]);
 
-  useEffect(() => {
-    const savedFavorites = localStorage.getItem('favorites');
-    if (savedFavorites) {
-      setFavorites(JSON.parse(savedFavorites));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (favorites.length > 0) {
-      localStorage.setItem('favorites', JSON.stringify(favorites));
-    }
-  }, [favorites]);
-
   const { data, error, isLoading, isValidating, mutate } = useSWR<Joke>(
     jokeUrl,
     fetcher,
     {
-      revalidateOnFocus: false,
-      dedupingInterval: 3000,
+      revalidateOnFocus: true,
+      refreshInterval: 10000,
+      dedupingInterval: 5000,
       onSuccess: () => setRequestCount((prev) => prev + 1),
       onError: () => console.error('Failed to fetch joke'),
     }
@@ -66,9 +54,6 @@ export default function RandomJoke() {
         <p className='text-2xl'>
           <strong>Punchline:</strong> {data?.delivery}
         </p>
-        {isValidating && (
-          <p className='text-blue-500 mt-2'>Checking for fresh jokes...</p>
-        )}
       </div>
 
       <div className='flex gap-4'>
@@ -95,7 +80,7 @@ export default function RandomJoke() {
       {favorites.length > 0 && (
         <div className='mt-10 w-full'>
           <h2 className='text-2xl font-semibold mb-4 text-center'>
-            Favorite Jokes({favorites.length})
+            Favorite Jokes ({favorites.length})
           </h2>
           <ul className='space-y-4'>
             {favorites.map((joke) => (
