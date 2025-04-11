@@ -21,22 +21,23 @@ export default function LatestWeather() {
   const { data, error, isLoading } = useSWR<Weather>(
     'https://api.tomorrow.io/v4/weather/forecast?location=malmö&apikey=rwI9twG0VuhjYYSTKXlLxgRitBH3qaCt',
     fetcher,
-    { refreshInterval: 120000 }
+    { refreshInterval: 6000000 }
   );
 
   if (error) return <div>Error loading weather...</div>;
   if (isLoading) return <div>Loading...</div>;
 
   const location = data?.location?.name;
-  const latestTemperature = data?.timelines?.minutely?.[0]?.values?.temperature; // Get temperature of the latest minute
+  const minutelyTimeline = data?.timelines?.minutely ?? [];
+  const latestTemp =
+    minutelyTimeline[minutelyTimeline.length - 1]?.values?.temperature;
+  const latestTime = minutelyTimeline[minutelyTimeline.length - 1]?.time;
 
   return (
     <div className='flex flex-col items-center justify-center mt-10 '>
       <h1>Real-Time Weather in: {location}</h1>
-      <p>
-        Temperature:{' '}
-        {latestTemperature !== undefined ? `${latestTemperature}°C` : 'N/A'}
-      </p>
+      <p>Temperature: {latestTemp !== undefined ? `${latestTemp}°C` : 'N/A'}</p>
+      <p>Time: {latestTime}</p>
     </div>
   );
 }
